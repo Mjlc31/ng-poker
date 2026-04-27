@@ -1,0 +1,41 @@
+{
+  "name": "ng.poker-application",
+  "version": "1.0.0",
+  "description": "NG.POKER Application - Formulário High-Ticket estilo Typeform",
+  "private": true,
+  "type": "module",
+  "author": "NG.HUB",
+  "license": "UNLICENSED",
+  "keywords": [
+    "react",
+    "typescript",
+    "form",
+    "multi-step",
+    "glassmorphism",
+    "framer-motion"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.95.3",
+    "dotenv": "^17.3.1",
+    "framer-motion": "^12.34.0",
+    "lucide-react": "^0.563.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}
