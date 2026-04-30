@@ -11,6 +11,7 @@ import {
   Sparkles,
   Copy,
   Check,
+  MessageCircle,
 } from 'lucide-react';
 
 interface CheckoutModalProps {
@@ -30,6 +31,25 @@ const PIX_COPIA_COLA =
 
 const PRICE = 'R$ 150,00';
 const PRICE_INT = '150';
+
+const WHATSAPP_NUMBER = '5582993236678';
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Olá! Tenho uma dúvida sobre a inscrição no NG.POKER Hold\'em Club. Pode me ajudar?')}`;
+
+const WhatsAppButton: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <a
+    id="checkout-whatsapp-btn"
+    href={WHATSAPP_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={`group flex items-center justify-center gap-2 py-3 px-5 rounded-2xl border border-[#25D366]/20 bg-[#25D366]/5 hover:bg-[#25D366]/10 hover:border-[#25D366]/35 transition-all duration-300 ${className}`}
+  >
+    <MessageCircle className="w-4 h-4 text-[#25D366] flex-shrink-0" />
+    <span className="text-[11px] text-white/50 group-hover:text-white/80 transition-colors font-medium">
+      Ficou com dúvida?{' '}
+      <span className="text-[#25D366] font-bold">Fale no WhatsApp</span>
+    </span>
+  </a>
+);
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   onSuccess,
@@ -365,13 +385,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             )}
           </AnimatePresence>
 
+          {/* WhatsApp Help Button — sempre visível */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mt-6"
+          >
+            <WhatsAppButton />
+          </motion.div>
+
           {/* Trust Footer */}
           {method === null && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="mt-8 pt-6 border-t border-white/5 flex items-center justify-center gap-2"
+              transition={{ delay: 0.5 }}
+              className="mt-5 pt-5 border-t border-white/5 flex items-center justify-center gap-2"
             >
               <Shield className="w-3.5 h-3.5 text-white/15" />
               <span className="text-[9px] text-white/20 uppercase tracking-[0.25em] font-bold">
