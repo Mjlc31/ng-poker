@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, Shield, Loader2, Sparkles } from 'lucide-reac
 import { BorderBeamInput } from './ui/BorderBeamInput';
 import { formatPhoneNumber } from '../utils/formatters';
 import { submitApplication } from '../services/supabaseClient';
+import { CheckoutModal } from './CheckoutModal';
 
 type ExperienceLevel = 'Iniciante' | 'Intermediário' | 'Avançado' | '';
 type NetworkingPain = 'Encontrar parceiros estratégicos' | 'Acessar novos mercados' | 'Ambiente de confiança para CEOs' | 'Escalar operação' | '';
@@ -59,25 +60,27 @@ export const PokerApplicationForm: React.FC = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Mock / Real Supabase submission based on the previous client logic
       await submitApplication({
         name: formData.fullName,
         phone: formData.whatsapp,
-        email: 'poker@nghub.com', // Optional if not collected
-        sector: formData.companyRole, // Storing role here
+        email: 'poker@nghub.com',
+        sector: formData.companyRole,
         instagram: formData.instagram,
         pain_point: formData.networkingPain,
         origin: 'NG.POKER App',
-        // Outros campos customizados poderiam ser passados para notes ou campos específicos
       });
-      nextStep(); // Go to step 6 (Success)
+      nextStep(); // Go to step 6 (Checkout)
     } catch (error) {
       console.error(error);
-      // In a real app we'd show an error toast here
-      nextStep(); // Allow them to see the success screen anyway for the mock
+      nextStep(); // Mostra checkout mesmo em caso de erro de rede
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCheckoutSuccess = () => {
+    setDirection(1);
+    setStep(7); // Tela de confirmação final
   };
 
   const isStepValid = () => {
@@ -319,29 +322,66 @@ export const PokerApplicationForm: React.FC = () => {
             </motion.div>
           )}
 
-          {/* Step 6: Thank You / Success Page */}
+          {/* Step 6: Checkout */}
           {step === 6 && (
-            <motion.div
+            <CheckoutModal
               key="step-6"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="w-full bg-surface/40 backdrop-blur-2xl border border-white/5 rounded-[40px] p-8 sm:p-12 shadow-2xl relative text-center"
-            >
-              <div className="mx-auto w-16 h-16 bg-ngGold-500/10 rounded-full flex items-center justify-center mb-6">
-                <CheckCircle2 className="w-8 h-8 text-ngGold-500" />
-              </div>
-              
-              <h2 className="text-3xl font-serif font-bold text-white mb-4">Aplicação Registrada.</h2>
-              <p className="text-white/40 text-sm font-light mb-10 max-w-md mx-auto leading-relaxed">
-                Nossa equipe de curadoria já recebeu os seus dados. Entraremos em contato muito em breve para validar seu convite e passar as instruções para garantir oficialmente a sua cadeira na mesa.
-              </p>
+              onSuccess={handleCheckoutSuccess}
+              userName={formData.fullName}
+            />
+          )}
 
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/[0.03] border border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.02)] backdrop-blur-md">
-                <div className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ngGold-500 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-ngGold-500"></span>
-                </div>
-                <span className="text-xs uppercase tracking-[0.2em] text-white/60 font-bold">Fique atento ao seu WhatsApp</span>
+          {/* Step 7: Confirmação Final */}
+          {step === 7 && (
+            <motion.div
+              key="step-7"
+              initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-lg mx-auto bg-[#0A0A0A]/80 backdrop-blur-3xl border border-white/8 rounded-[36px] p-8 sm:p-12 shadow-2xl relative text-center overflow-hidden"
+            >
+              {/* Glow top */}
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-ngGold-500/40 to-transparent" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-40 bg-ngGold-500/6 rounded-full blur-[80px] pointer-events-none" />
+
+              <div className="relative z-10">
+                {/* Ícone animado */}
+                <motion.div
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
+                  className="mx-auto w-20 h-20 bg-ngGold-500/10 border border-ngGold-500/20 rounded-full flex items-center justify-center mb-7"
+                >
+                  <CheckCircle2 className="w-10 h-10 text-ngGold-400" />
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35, duration: 0.5 }}
+                >
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ngGold-500/8 border border-ngGold-500/20 mb-5">
+                    <Sparkles className="w-3 h-3 text-ngGold-500" />
+                    <span className="text-[9px] uppercase tracking-[0.25em] text-ngGold-400 font-bold">Acesso Ativado</span>
+                  </div>
+
+                  <h2 className="text-3xl sm:text-4xl font-serif font-bold text-white mb-4 leading-tight">
+                    Bem-vindo à mesa,{' '}
+                    <span className="text-ngGold-400">{formData.fullName.split(' ')[0]}</span>.
+                  </h2>
+
+                  <p className="text-white/35 text-sm font-light mb-10 max-w-sm mx-auto leading-relaxed">
+                    Sua aplicação foi registrada e o pagamento está sendo verificado. Nossa equipe entrará em contato via WhatsApp com as instruções finais para a sua cadeira.
+                  </p>
+
+                  <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md">
+                    <div className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ngGold-500 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-ngGold-500"></span>
+                    </div>
+                    <span className="text-xs uppercase tracking-[0.2em] text-white/50 font-bold">Fique atento ao seu WhatsApp</span>
+                  </div>
+                </motion.div>
               </div>
             </motion.div>
           )}

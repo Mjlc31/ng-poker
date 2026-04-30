@@ -10,21 +10,21 @@ import { Confetti } from './ui/Confetti';
 export const PaymentScreen: React.FC = React.memo(() => {
     const [paymentMethod, setPaymentMethod] = useState<'pix' | 'credit'>('credit');
     const [isProcessing, setIsProcessing] = useState(false);
-    
+
     const paymentLink = import.meta.env.VITE_PAYMENT_LINK || "https://link.infinitepay.io/artur-galdino-de/VC1DLTAtUg-SMpaDlkKL-297,00";
 
     const handlePaymentClick = () => {
-      setIsProcessing(true);
-      setTimeout(() => {
-        window.open(paymentLink, '_blank');
-        setIsProcessing(false);
-      }, 800);
+        setIsProcessing(true);
+        setTimeout(() => {
+            window.open(paymentLink, '_blank');
+            setIsProcessing(false);
+        }, 800);
     };
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 relative z-10 overflow-hidden">
             <Confetti />
-            
+
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -38,16 +38,16 @@ export const PaymentScreen: React.FC = React.memo(() => {
                 {/* Brand Header Section */}
                 <div className="flex flex-col items-center mb-10 text-center relative z-10">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/5 mb-6">
-                      <Sparkles className="w-3 h-3 text-ng-gold-500" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-bold font-sans">Acesso Exclusivo</span>
+                        <Sparkles className="w-3 h-3 text-ng-gold-500" />
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-bold font-sans">Acesso Exclusivo</span>
                     </div>
-                    
+
                     <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white leading-tight mb-4 tracking-tight">
-                      Boas-vindas ao <span className="text-ng-gold-500">NG.RITMO</span>
+                        Boas-vindas ao <span className="text-ng-gold-500">NG.RITMO</span>
                     </h1>
-                    
+
                     <p className="text-white/40 text-sm font-light max-w-sm font-sans">
-                      Sua vaga está pré-garantida. Escolha o método de ativação abaixo para acessar o ambiente de elite.
+                        Sua vaga está pré-garantida. Escolha o método de ativação abaixo para acessar o ambiente de elite.
                     </p>
                 </div>
 
@@ -90,11 +90,11 @@ export const PaymentScreen: React.FC = React.memo(() => {
                                 className="flex flex-col items-center"
                             >
                                 <div className="text-center mb-10">
-                                  <span className="text-[10px] text-white/20 uppercase tracking-[0.4em] font-sans block mb-3 font-bold">Taxa de Adesão</span>
-                                  <div className="text-6xl font-serif font-bold text-white tracking-tighter flex items-start justify-center">
-                                    <span className="text-2xl text-ng-gold-500 mt-2 mr-1">R$</span>
-                                    <span>297</span>
-                                  </div>
+                                    <span className="text-[10px] text-white/20 uppercase tracking-[0.4em] font-sans block mb-3 font-bold">Taxa de Adesão</span>
+                                    <div className="text-6xl font-serif font-bold text-white tracking-tighter flex items-start justify-center">
+                                        <span className="text-2xl text-ng-gold-500 mt-2 mr-1">R$</span>
+                                        <span>297</span>
+                                    </div>
                                 </div>
 
                                 <button
@@ -103,15 +103,15 @@ export const PaymentScreen: React.FC = React.memo(() => {
                                     className="w-full flex items-center justify-center gap-3 py-5 px-8 bg-white text-black rounded-2xl font-bold text-lg hover:bg-ng-gold-500 transition-all shadow-[0_15px_40px_rgba(255,255,255,0.05)] hover:shadow-ng-gold-500/30 active:scale-[0.98] disabled:opacity-50"
                                 >
                                     {isProcessing ? (
-                                      <Loader2 className="w-6 h-6 animate-spin text-black" />
+                                        <Loader2 className="w-6 h-6 animate-spin text-black" />
                                     ) : (
-                                      <>
-                                        Pagar com Cartão
-                                        <ArrowRight className="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform" />
-                                      </>
+                                        <>
+                                            Pagar com Cartão
+                                            <ArrowRight className="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform" />
+                                        </>
                                     )}
                                 </button>
-                                
+
                                 <div className="mt-8 flex items-center gap-2 text-[9px] text-white/20 uppercase tracking-[0.3em] font-bold">
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
                                     InfinitePay Secure Layer Active
