@@ -3,33 +3,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, CheckCircle2, Shield, Loader2, Sparkles } from 'lucide-react';
 import { BorderBeamInput } from './ui/BorderBeamInput';
 import { formatPhoneNumber } from '../utils/formatters';
-import { submitApplication } from '../services/supabaseClient';
+import { submitApplication, getEbookUrl } from '../services/supabaseClient';
 import { CheckoutModal } from './CheckoutModal';
 
-type ExperienceLevel = 'Iniciante' | 'Intermediário' | 'Avançado' | '';
-type NetworkingPain = 'Encontrar parceiros estratégicos' | 'Acessar novos mercados' | 'Ambiente de confiança para CEOs' | 'Escalar operação' | '';
-type OpportunityCost = 'Sim, o crescimento é lento' | 'Parcialmente' | 'Não, meu network atende' | '';
+type ExperienceLevel = 'Nunca joguei' | 'Conheço as regras' | 'Jogo com amigos' | 'Avançado' | '';
+type PokerGoal = 'Fazer networking/negócios' | 'Hobby e diversão' | 'Autodesenvolvimento' | 'Profissionalizar' | '';
 
 export interface PokerFormData {
   fullName: string;
   whatsapp: string;
-  companyRole: string;
-  instagram: string;
+  email: string;
   experienceLevel: ExperienceLevel;
-  networkingPain: NetworkingPain;
-  opportunityCost: OpportunityCost;
-  allInGoal: string;
+  pokerGoal: PokerGoal;
 }
 
 const INITIAL_DATA: PokerFormData = {
   fullName: '',
   whatsapp: '',
-  companyRole: '',
-  instagram: '',
+  email: '',
   experienceLevel: '',
-  networkingPain: '',
-  opportunityCost: '',
-  allInGoal: ''
+  pokerGoal: '',
 };
 
 export const PokerApplicationForm: React.FC = () => {
@@ -63,32 +56,37 @@ export const PokerApplicationForm: React.FC = () => {
       await submitApplication({
         name: formData.fullName,
         phone: formData.whatsapp,
-        email: 'poker@nghub.com',
-        sector: formData.companyRole,
-        instagram: formData.instagram,
-        pain_point: formData.networkingPain,
-        origin: 'NG.POKER App',
+        email: formData.email,
+        pain_point: formData.pokerGoal,
+        origin: 'Ebook Poker Iniciantes',
       });
-      nextStep(); // Go to step 6 (Checkout)
+      nextStep(); // Vai para a tela de Download do eBook
     } catch (error) {
       console.error(error);
-      nextStep(); // Mostra checkout mesmo em caso de erro de rede
+      nextStep(); // Mostra tela de download mesmo em caso de erro
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleDownloadEbook = () => {
+    // Busca a URL pública do Ebook no bucket 'ebooks'
+    const ebookUrl = getEbookUrl('NGPOKER-EBOOK.pdf');
+    window.open(ebookUrl, '_blank');
+    
+    // Avança direto pro checkout na aba atual
+    nextStep();
+  };
+
   const handleCheckoutSuccess = () => {
     setDirection(1);
-    setStep(7); // Tela de confirmação final
+    setStep(6); // Tela de confirmação final
   };
 
   const isStepValid = () => {
     switch (step) {
       case 1:
-        return formData.fullName.trim().length > 3 && formData.whatsapp.length > 13 && formData.companyRole.trim().length > 2 && formData.instagram.trim().length > 2;
-      case 5:
-        return formData.allInGoal.trim().length > 5;
+        return formData.fullName.trim().length > 3 && formData.whatsapp.length > 13 && formData.email.includes('@');
       default:
         return true;
     }
@@ -133,23 +131,23 @@ export const PokerApplicationForm: React.FC = () => {
               className="text-center space-y-8 flex flex-col items-center"
             >
               <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-bold leading-tight tracking-tight mt-4">
-                Mais do que um <span className="text-transparent bg-clip-text bg-gradient-to-r from-ngGold-400 to-ngGold-600">jogo.</span>
+                Aprenda Poker do <span className="text-transparent bg-clip-text bg-gradient-to-r from-ngGold-400 to-ngGold-600">Zero.</span>
               </h1>
               
               <p className="text-base sm:text-xl text-white/40 font-light max-w-xl leading-relaxed">
-                Uma mesa onde as cartas são apenas o pretexto para o seu próximo grande negócio. Vagas Limitadas para o dia 02/05.
+                Baixe nosso eBook gratuito e descubra como dominar a mesa. As regras, as estratégias e o mindset dos vencedores.
               </p>
 
               <button
                 onClick={nextStep}
                 className="mt-8 px-10 py-5 rounded-2xl bg-gradient-to-r from-ngGold-600 to-ngGold-400 text-black font-bold uppercase tracking-[0.15em] hover:scale-105 transition-all shadow-[0_0_40px_rgba(200,155,60,0.3)] animate-breathe"
               >
-                Iniciar Aplicação
+                Baixar eBook Gratuito
               </button>
             </motion.div>
           )}
 
-          {step > 0 && step < 6 && (
+          {step > 0 && step < 4 && (
             <motion.div
               key={`step-${step}`}
               custom={direction}
@@ -161,47 +159,40 @@ export const PokerApplicationForm: React.FC = () => {
             >
               <div className="mb-8">
                 <span className="text-ngGold-500 text-[10px] uppercase tracking-[0.4em] font-bold mb-4 block">
-                  Etapa {step} de 5
+                  Etapa {step} de 3
                 </span>
 
                 {/* Step 1: Identificação */}
                 {step === 1 && (
                   <div className="space-y-6">
                     <h2 className="text-2xl sm:text-4xl font-serif font-bold text-white leading-tight">
-                      Para começarmos, quem é você na mesa?
+                      Para onde devemos enviar seu eBook?
                     </h2>
                     <div className="space-y-4 mt-8">
                       <div>
-                        <label className="text-xs text-white/40 uppercase tracking-widest mb-2 block ml-2">Nome e Sobrenome</label>
+                        <label className="text-xs text-white/40 uppercase tracking-widest mb-2 block ml-2">Nome Completo</label>
                         <BorderBeamInput 
-                          placeholder="Ex: Arthur Galdino" 
+                          placeholder="Seu nome" 
                           value={formData.fullName} 
                           onChange={e => updateForm('fullName', e.target.value)} 
                           autoFocus
                         />
                       </div>
                       <div>
-                        <label className="text-xs text-white/40 uppercase tracking-widest mb-2 block ml-2">WhatsApp Corporativo</label>
+                        <label className="text-xs text-white/40 uppercase tracking-widest mb-2 block ml-2">Melhor E-mail</label>
+                        <BorderBeamInput 
+                          placeholder="seu@email.com" 
+                          type="email"
+                          value={formData.email} 
+                          onChange={e => updateForm('email', e.target.value)} 
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-white/40 uppercase tracking-widest mb-2 block ml-2">WhatsApp</label>
                         <BorderBeamInput 
                           placeholder="(00) 00000-0000" 
                           value={formData.whatsapp} 
                           onChange={e => updateForm('whatsapp', formatPhoneNumber(e.target.value))} 
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs text-white/40 uppercase tracking-widest mb-2 block ml-2">Sua Empresa e Cargo Atual</label>
-                        <BorderBeamInput 
-                          placeholder="Ex: NG.HUB - CEO" 
-                          value={formData.companyRole} 
-                          onChange={e => updateForm('companyRole', e.target.value)} 
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs text-white/40 uppercase tracking-widest mb-2 block ml-2">Instagram (Pessoal ou Empresa)</label>
-                        <BorderBeamInput 
-                          placeholder="Ex: @nghub.os" 
-                          value={formData.instagram} 
-                          onChange={e => updateForm('instagram', e.target.value)} 
                         />
                       </div>
                     </div>
@@ -212,10 +203,10 @@ export const PokerApplicationForm: React.FC = () => {
                 {step === 2 && (
                   <div className="space-y-6">
                     <h2 className="text-2xl sm:text-4xl font-serif font-bold text-white leading-tight">
-                      Qual é o seu nível de experiência nas mesas de Poker?
+                      Qual é o seu nível de experiência com Poker?
                     </h2>
                     <div className="grid grid-cols-1 gap-3 mt-8">
-                      {['Iniciante', 'Intermediário', 'Avançado'].map(level => (
+                      {['Nunca joguei', 'Conheço as regras', 'Jogo com amigos', 'Avançado'].map(level => (
                         <button
                           key={level}
                           onClick={() => handleSelectAndNext('experienceLevel', level)}
@@ -232,66 +223,26 @@ export const PokerApplicationForm: React.FC = () => {
                   </div>
                 )}
 
-                {/* Step 3: Dor */}
+                {/* Step 3: Objetivo */}
                 {step === 3 && (
                   <div className="space-y-6">
                     <h2 className="text-2xl sm:text-4xl font-serif font-bold text-white leading-tight">
-                      No mundo dos negócios, seu network dita o seu net worth. Qual é o seu maior gargalo hoje?
+                      Qual o seu principal objetivo ao aprender Poker?
                     </h2>
                     <div className="grid grid-cols-1 gap-3 mt-8">
-                      {['Encontrar parceiros estratégicos', 'Acessar novos mercados', 'Ambiente de confiança para CEOs', 'Escalar operação'].map(pain => (
+                      {['Fazer networking/negócios', 'Hobby e diversão', 'Autodesenvolvimento', 'Profissionalizar'].map(goal => (
                         <button
-                          key={pain}
-                          onClick={() => handleSelectAndNext('networkingPain', pain)}
+                          key={goal}
+                          onClick={() => updateForm('pokerGoal', goal)}
                           className={`
                             p-5 rounded-2xl border text-left transition-all duration-300 flex items-center justify-between group
-                            ${formData.networkingPain === pain ? 'bg-ngGold-500/10 border-ngGold-500 text-white' : 'bg-white/[0.02] border-white/5 text-white/50 hover:bg-white/[0.05] hover:border-white/20 hover:text-white'}
+                            ${formData.pokerGoal === goal ? 'bg-ngGold-500/10 border-ngGold-500 text-white' : 'bg-white/[0.02] border-white/5 text-white/50 hover:bg-white/[0.05] hover:border-white/20 hover:text-white'}
                           `}
                         >
-                          <span className="text-lg font-light tracking-wide">{pain}</span>
+                          <span className="text-lg font-light tracking-wide">{goal}</span>
+                          <div className={`w-2 h-2 rounded-full transition-all ${formData.pokerGoal === goal ? 'bg-ngGold-500 shadow-[0_0_10px_#C89B3C]' : 'bg-transparent'}`} />
                         </button>
                       ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 4: Oportunidade */}
-                {step === 4 && (
-                  <div className="space-y-6">
-                    <h2 className="text-2xl sm:text-4xl font-serif font-bold text-white leading-tight">
-                      Seja honesto: você sente que a falta de um ecossistema fechado está fazendo você deixar dinheiro na mesa?
-                    </h2>
-                    <div className="grid grid-cols-1 gap-3 mt-8">
-                      {['Sim, o crescimento é lento', 'Parcialmente', 'Não, meu network atende'].map(cost => (
-                        <button
-                          key={cost}
-                          onClick={() => handleSelectAndNext('opportunityCost', cost)}
-                          className={`
-                            p-5 rounded-2xl border text-left transition-all duration-300 flex items-center justify-between group
-                            ${formData.opportunityCost === cost ? 'bg-ngGold-500/10 border-ngGold-500 text-white' : 'bg-white/[0.02] border-white/5 text-white/50 hover:bg-white/[0.05] hover:border-white/20 hover:text-white'}
-                          `}
-                        >
-                          <span className="text-lg font-light tracking-wide">{cost}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 5: All-In */}
-                {step === 5 && (
-                  <div className="space-y-6">
-                    <h2 className="text-2xl sm:text-4xl font-serif font-bold text-white leading-tight">
-                      Se o NG.POKER te colocar na mesma mesa que seus próximos 3 maiores clientes ou parceiros, o que você estaria buscando fechar?
-                    </h2>
-                    <div className="mt-8">
-                      <BorderBeamInput 
-                        as="textarea"
-                        placeholder="Ex: Busco investidores para minha rodada seed, ou sócios de tecnologia para uma nova vertical..." 
-                        value={formData.allInGoal} 
-                        onChange={e => updateForm('allInGoal', e.target.value)} 
-                        autoFocus
-                      />
                     </div>
                   </div>
                 )}
@@ -308,33 +259,66 @@ export const PokerApplicationForm: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={step === 5 ? handleSubmit : nextStep}
+                  onClick={step === 3 ? handleSubmit : nextStep}
                   disabled={!isStepValid() || isSubmitting}
                   className={`
                     px-8 py-3.5 rounded-xl font-bold uppercase tracking-widest text-xs flex items-center gap-2 transition-all duration-300
                     ${isStepValid() ? 'bg-white text-black hover:bg-ngGold-500 shadow-[0_0_20px_rgba(255,255,255,0.1)]' : 'bg-white/5 text-white/20 cursor-not-allowed'}
                   `}
                 >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : (step === 5 ? 'All-in!' : 'Próximo')}
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : (step === 3 ? 'Enviar e Baixar' : 'Próximo')}
                   {!isSubmitting && <ArrowRight className="w-4 h-4" />}
                 </button>
               </div>
             </motion.div>
           )}
 
-          {/* Step 6: Checkout */}
-          {step === 6 && (
-            <CheckoutModal
-              key="step-6"
+          {/* Step 4: Ebook Download Button */}
+          {step === 4 && (
+            <motion.div
+              key="step-4"
+              initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-lg mx-auto bg-[#0A0A0A]/80 backdrop-blur-3xl border border-white/8 rounded-[36px] p-8 sm:p-12 shadow-2xl relative text-center overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-ngGold-500/40 to-transparent" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-40 bg-ngGold-500/6 rounded-full blur-[80px] pointer-events-none" />
+
+              <div className="relative z-10 space-y-6">
+                <CheckCircle2 className="w-16 h-16 text-ngGold-500 mx-auto" />
+                <h2 className="text-3xl font-serif font-bold text-white leading-tight">
+                  Seu eBook está pronto!
+                </h2>
+                <p className="text-white/40 text-sm font-light">
+                  Clique no botão abaixo para fazer o download e comece a estudar as regras do Poker.
+                </p>
+                
+                <button
+                  onClick={handleDownloadEbook}
+                  className="w-full py-5 rounded-2xl bg-gradient-to-r from-ngGold-600 to-ngGold-400 text-black font-bold uppercase tracking-[0.15em] hover:scale-105 transition-all shadow-[0_0_40px_rgba(200,155,60,0.3)] flex items-center justify-center gap-2"
+                >
+                  <span>Baixar PDF Agora</span>
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 5: Checkout (Oferta imediata após o download) */}
+          {step === 5 && (
+              <CheckoutModal
+              key="step-5"
               onSuccess={handleCheckoutSuccess}
               userName={formData.fullName}
             />
           )}
 
-          {/* Step 7: Confirmação Final */}
-          {step === 7 && (
+          {/* Step 6: Confirmação Final */}
+          {step === 6 && (
             <motion.div
-              key="step-7"
+              key="step-6"
               initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}

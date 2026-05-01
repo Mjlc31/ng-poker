@@ -103,20 +103,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         <div className="p-8 sm:p-10">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ngGold-500/8 border border-ngGold-500/20 mb-5">
-              <Sparkles className="w-3 h-3 text-ngGold-500" />
-              <span className="text-[9px] uppercase tracking-[0.25em] text-ngGold-400 font-bold">
-                Sua vaga foi aprovada
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-5">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+              <span className="text-[9px] uppercase tracking-[0.25em] text-emerald-400 font-bold">
+                Ebook enviado por E-mail
               </span>
             </div>
 
             <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white leading-tight mb-3">
-              Garanta sua cadeira,{' '}
+              Dê o próximo passo,{' '}
               <span className="text-ngGold-400">{firstName}</span>
             </h2>
-            <p className="text-white/35 text-sm font-light max-w-sm mx-auto leading-relaxed">
-              Falta apenas um passo. Escolha como deseja ativar o seu acesso ao
-              NG.POKER Hold'em Club.
+            <p className="text-white/40 text-sm font-light max-w-sm mx-auto leading-relaxed">
+              Que tal aplicar o que você vai aprender nas mesas reais? Garanta seu acesso exclusivo ao NG.POKER Hold'em Club e jogue com grandes nomes da cidade.
             </p>
           </div>
 

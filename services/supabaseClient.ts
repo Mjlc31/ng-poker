@@ -34,3 +34,11 @@ export const submitApplication = async (formData: any) => {
     
     return data;
 };
+
+/**
+ * Gets the public URL for the Ebook PDF
+ */
+export const getEbookUrl = (filename: string = 'ebook.pdf') => {
+    const { data } = supabase.storage.from('ebooks').getPublicUrl(filename);
+    return data.publicUrl;
+};
